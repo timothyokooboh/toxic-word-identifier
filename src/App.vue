@@ -1,17 +1,32 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+   
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import * as toxicity from '@tensorflow-models/toxicity';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+  },
+  mounted(){
+    // The minimum prediction confidence.
+    const threshold = 0.8;
+    const labelsToLoad = ["insult", "toxicity"]
+    // Load the model. Users optionally pass in a threshold and an array of
+    // labels to include.
+    toxicity.load(threshold, labelsToLoad).then(model => {
+      const sentences = ["this is not good of you. I expected better. you acted wrong"];
+    
+      model.classify(sentences).then(predictions => {
+        console.log(predictions);
+      });
+    }).catch(err => {
+      console.log("an arror occured")
+      console.log(err)
+    })
   }
 }
 </script>
